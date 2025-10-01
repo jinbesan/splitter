@@ -1,0 +1,124 @@
+body, li, input, button {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+h1 {
+    font-family: 'Ubuntu', sans-serif;
+    color: #444;
+    text-align: center;
+}
+
+h2 {
+    font-family: 'Ubuntu', sans-serif;
+    color: #444;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input, select, button {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+
+li {
+    background: white;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+}
+
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
+    gap: 20px; /* spacing between columns */
+}
+
+.column {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1px;
+}
+
+.form-group label {
+    width: 120px; /* fixed label width */
+    font-weight: bold;
+}
+
+.form-group input, 
+.form-group select {
+    flex: 1; /* take remaining space */
+    padding: 5px;
+}
+
+.settlement-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 8px 12px;
+    margin: 6px 0;
+    border-radius: 6px;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+.settlement-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* 🔑 ensures vertical centering */
+    gap: 10px; /* optional spacing */
+    background: #fff;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+}
+.settlement-item form {
+    margin: 0; /* remove extra margin */
+}
+.settlement-item button {
+    padding: 8px 10px; /* keeps it tight */
+}
+
+/*
+    margin-top: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+*/
