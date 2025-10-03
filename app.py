@@ -28,7 +28,7 @@ def add_transaction():
     name = request.form.get("name")
 
     if payer and amount and beneficiaries:
-        splitter.add_transaction(name, payer, int(amount), beneficiaries)
+        splitter.add_transaction(name, payer, float(amount), beneficiaries)
     
 
     return redirect(url_for("index"))
@@ -47,4 +47,4 @@ def settle(debtor, creditor):
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

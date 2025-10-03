@@ -40,8 +40,17 @@
 
                 <div class="form-group">
                     <label>Amount: </label>
-                    <input type="number" id="amount" name="amount" required>
+                    <input type="number" step="0.01" min=0 id="amount" name="amount" required>
                 </div>
+
+                <label>Split Type:
+                    <select id="split-type" name="split_type">
+                        <option value="equal">Equal</option>
+                        <option value="shares">By Shares</option>
+                        <option value="exact">Exact Amounts</option>
+                    </select>
+                </label>
+                <br><br>
 
                 <label>For:</label><br>
                 {% for person in people %}
@@ -56,10 +65,10 @@
             <ul id="settlements-list">
                 {% for settlement in settlements %}
                     <li class="settlement-item">
-                        <span>{{ settlement.debtor }} -> {{ settlement.creditor }}: ${{ settlement.payment }}</span>
-                        <form action="{{ url_for('settle', debtor=settlement.debtor, creditor=settlement.creditor)}}" method="POST" style="display:inline;">
-                            <button type="submit">Settle</button>
-                        </form>
+                            <span>{{ settlement.debtor }} -> {{ settlement.creditor }}: ${{ "%.2f" % settlement.payment }}</span>
+                            <form action="{{ url_for('settle', debtor=settlement.debtor, creditor=settlement.creditor)}}" method="POST" style="display:inline;">
+                                <button type="submit">Settle</button>
+                            </form>
                     </li>
                 {% endfor %}
             </ul>
@@ -67,12 +76,12 @@
             <h2>Balances</h2>
             <ul id="balances-list">
                 {% for person in people %}
-                    <li>{{ person.name }} | Balance: ${{ person.balance }}</li>
+                    <li>{{ person.name }} | Balance: ${{ "%.2f" % person.balance }}</li>
                 {% endfor %}
             </ul>
         </div>
 
-        <div class="column">
+        <div class="column transactions-list">
             <h2>Transactions</h2>
             <ul id="transactions-list">
                 {% for transaction in transactions %}

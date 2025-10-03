@@ -118,4 +118,4 @@ class Split:
             b = f"{beneficiaries[0]} and {beneficiaries[1]}"
         else:
             b = ", ".join(beneficiaries[:-1]) + f" and {beneficiaries[-1]}"
-        return f"{transaction['date']} | {transaction['name']}: {transaction['payer']} paid {transaction['amount']} for {b}"
+        return f"{transaction['date']} | {transaction['name']}: {transaction['payer']} paid ${transaction['amount']:.2f} for {b}"
