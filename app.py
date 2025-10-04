@@ -26,10 +26,28 @@ def add_transaction():
     amount = request.form.get("amount")
     beneficiaries = request.form.getlist("beneficiaries")
     name = request.form.get("name")
+    split_type = request.form.get('split_type')
 
-    if payer and amount and beneficiaries:
-        splitter.add_transaction(name, payer, float(amount), beneficiaries)
-    
+    if (split_type == "equal"):
+        if payer and amount and beneficiaries:
+            splitter.add_transaction(name, payer, float(amount), beneficiaries, type="equal")
+    elif (split_type == "shares"):
+        shares = {}
+        for person in beneficiaries:
+            val = request.form.get(f"shares_{person}", type=float)
+            shares[person] = val
+        if payer and amount and beneficiaries and shares:
+            splitter.add_transaction(name, payer, float(amount), beneficiaries, type="shares", shares=shares)
+    elif (split_type == "exact"):
+        exacts = {}
+        for person in beneficiaries:
+            val = request.form.get(f"exact_{person}", type=float)
+            print(val)
+            exacts[person] = val
+        if payer and beneficiaries and exacts:
+            splitter.add_transaction(name, payer, float(amount), beneficiaries, type="exact", exact=exacts)
+
+
 
     return redirect(url_for("index"))
 
@@ -47,4 +65,4 @@ def settle(debtor, creditor):
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

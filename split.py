@@ -38,7 +38,7 @@ class Split:
         self.save()
         return
     
-    def add_transaction(self, name, payer, amount, beneficiaries):
+    def add_transaction(self, name, payer, amount, beneficiaries, type="equal", shares=None, exact=None):
         name = name if name else "Unnamed Transaction"
         today = datetime.now()
         transaction = {
@@ -46,31 +46,60 @@ class Split:
             "payer": payer,
             "beneficiaries": beneficiaries,
             "amount": amount,
+            "type": type,
+            "shares": shares,
+            "exact": exact,
             "date": today.strftime("%d/%m/%y")
         }
-        transaction["print"] = self.print_transaction(transaction)
-        print(transaction)
-        self.transactions.appendleft(transaction)
+        
+        
         self._update_balances(transaction)
+        transaction["print"] = self.print_transaction(transaction)
+        self.transactions.appendleft(transaction)
         self.save()
         return
     
     def _update_balances(self, transaction):
         # Positive: Receive money, Negative: Owe money
-        receive = transaction['amount']
-        owe = receive / len(transaction['beneficiaries'])
+        if (transaction['type'] == "equal"):
+            receive = transaction['amount']
+            owe = receive / len(transaction['beneficiaries'])
 
-        for i in range(len(self.people)):
-            person = self.people[i]
-            if (person['name'] == transaction['payer']):
-                self.people[i]['balance'] += receive
-            if (person['name'] in transaction['beneficiaries']):
-                self.people[i]['balance'] -= owe
+            for i in range(len(self.people)):
+                person = self.people[i]
+                if (person['name'] == transaction['payer']):
+                    self.people[i]['balance'] += receive
+                if (person['name'] in transaction['beneficiaries']):
+                    self.people[i]['balance'] -= owe
+
+        elif (transaction['type'] == "shares"):
+            shares = transaction['shares']
+            total_shares = sum(float(v) for v in shares.values())
+            receive = transaction['amount']
+            owe_pershare = receive / total_shares
+
+            for i in range(len(self.people)):
+                person = self.people[i]
+                if (person['name'] == transaction['payer']):
+                    self.people[i]['balance'] += receive
+                if (person['name'] in transaction['beneficiaries']):
+                    self.people[i]['balance'] -= owe_pershare * shares[person['name']]
+
+        elif (transaction['type'] == "exact"):
+            exacts = transaction['exact']
+            receive = sum(float(v) for v in exacts.values())
+            transaction['amount'] = receive
+
+            for i in range(len(self.people)):
+                person = self.people[i]
+                if (person['name'] == transaction['payer']):
+                    self.people[i]['balance'] += receive
+                if (person['name'] in transaction['beneficiaries']):
+                    self.people[i]['balance'] -= exacts[person['name']]
         return
     
     def get_people(self):
         return self.people
-
     
     def get_transactions(self):
         return self.transactions
@@ -109,13 +138,29 @@ class Split:
     
     def print_transaction(self, transaction):
         beneficiaries = transaction['beneficiaries']
+        print(beneficiaries)
+        print(transaction)
+        statement = f"{transaction['date']} | {transaction['name']}: {transaction['payer']} paid ${transaction['amount']:.2f} "
+        if (transaction["type"] == "equal"):
+            if not beneficiaries:
+                b = ""
+            elif len(beneficiaries) == 1:
+                b = beneficiaries[0]
+            elif len(beneficiaries) == 2:
+                b = f"{beneficiaries[0]} and {beneficiaries[1]}"
+            else:
+                b = ", ".join(beneficiaries[:-1]) + f" and {beneficiaries[-1]}"
+            statement = statement + f"for {b}"
 
-        if not beneficiaries:
-            b = ""
-        elif len(beneficiaries) == 1:
-            b = beneficiaries[0]
-        elif len(beneficiaries) == 2:
-            b = f"{beneficiaries[0]} and {beneficiaries[1]}"
-        else:
-            b = ", ".join(beneficiaries[:-1]) + f" and {beneficiaries[-1]}"
-        return f"{transaction['date']} | {transaction['name']}: {transaction['payer']} paid ${transaction['amount']:.2f} for {b}"
+        elif (transaction['type'] == "shares"):
+            amount = transaction['amount']
+            shares = transaction['shares']
+            total_shares = sum(float(v) for v in shares.values())
+            shares_statement = ", ".join(f"{beneficiary}: ${(amount/total_shares) * shares[beneficiary]:.2f}, {shares[beneficiary]:.1f} shares" for beneficiary in beneficiaries)
+            statement = statement + shares_statement
+
+        elif (transaction['type'] == "exact"):
+            exact_statement = ", ".join(f"{beneficiary}: ${transaction['exact'][beneficiary]:.2f}" for beneficiary in beneficiaries)
+            statement = statement + exact_statement
+
+        return statement
